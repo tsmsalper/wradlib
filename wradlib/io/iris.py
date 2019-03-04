@@ -1112,9 +1112,12 @@ def to_float(data):
     decoded : :class:`numpy:numpy.ndarray`
         decoded floating point data
     """
+    mantissa  = np.array(data,dtype='uint32')
     exp = data >> 12
-    mantissa = (data & 0xfff).astype(np.float)
-    return mantissa * 2 ** exp
+    ind_non0 = exp > 0
+    mantissa[ind_non0] = np.array(data[ind_non0] & 0xfff + 4096,dtype='uint32')
+    mantissa[ind_non0] = mantissa[ind_non0] << (exp[ind_non0]-1)
+    return mantissa 
 
 
 # TODO: mask nodata and area not scanned
@@ -1153,8 +1156,12 @@ def decode_array(data, scale=1., offset=0, offset2=0, tofloat=False):
 
 
 def decode_rainrate2(data):
-    print("not decoding data")
-    return data
+    mantissa  = np.array(data,dtype='uint32')
+    exp = data >> 12
+    ind_non0 = exp > 0
+    mantissa[ind_non0] = np.array(data[ind_non0] & 0xfff + 4096,dtype='uint32')
+    mantissa[ind_non0] = mantissa[ind_non0] << (exp[ind_non0]-1)
+    return mantissa/10000
 
 
 def decode_vel(data, **kwargs):
