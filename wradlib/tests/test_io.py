@@ -932,7 +932,12 @@ class IrisTest(unittest.TestCase):
                                    scale=253., offset=-1),
             [np.nan, 0., 0.06286946, 0.08891084, 0.1088931, 0.12573892,
              0.14058039, 0.1539981, 0.16633696, 0.17782169])
-
+    
+    def test_decode_rainrate2(self):
+        np.testing.assert_array_almost_equal(
+            wrl.io.iris.decode_rainrate2(np.array([0, 1, 2, 225, 1000, 9096, 22634, 34922, 50000, 65534,65535], dtype=np.int32),
+            [        0,         1,         2,       225,      1000,     10000,
+          100000,    800000,  10125312, 134184960, 134201344]))
     def test_decode_time(self):
         timestring = b'\xd1\x9a\x00\x000\t\xdd\x07\x0b\x00\x19\x00'
         self.assertEqual(wrl.io.iris.decode_time(timestring).isoformat(),
